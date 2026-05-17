@@ -92,13 +92,17 @@ A countdown banner announces each incoming wave. Survive until the last wave —
 
 ## Credits
 
+**Created by [Laszlo Sierra](https://github.com/LaszloSM)**
+Game design, programming, and all systems built from scratch in Unity 6.
+
 **Pixel art assets** — [Tiny Sword](https://pixelfrog-assets.itch.io/) by **Pixel Frog**
 → https://pixelfrog-assets.itch.io/
 
-All sprites, animations, tilemaps, UI elements, particle effects, and audio used in this game are from the Tiny Sword asset pack created by Pixel Frog. Please support their amazing work!
+Sprites, animations, tilemaps, UI elements, particle effects, and audio from the Tiny Sword asset pack. Please support their amazing work!
 
 ---
 
 ## License
 
-This project is for educational and portfolio purposes. All visual and audio assets belong to their respective creators (see Credits above).
+© 2025 Laszlo Sierra. All rights reserved.
+Visual and audio assets belong to their respective creators (see Credits above).
