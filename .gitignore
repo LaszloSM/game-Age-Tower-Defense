@@ -1,0 +1,28 @@
+Library/
+Temp/
+Logs/
+Obj/
+Build/
+Builds/
+UserSettings/
+MemoryCaptures/
+
+# Unity package hidden folders (contain large platform binaries, not needed in source control)
+[Pp]ackages/*/RelayApp~/
+[Pp]ackages/*/.Runtime/
+[Pp]ackages/*/Editor/RelayApp/
+
+# Large AI assistant binaries
+Packages/com.unity.ai.assistant/
+
+# Burst compiler native binaries inside package cache
+Packages/com.unity.burst/
+
+# IDE & OS files
+.vs/
+.idea/
+*.csproj
+*.sln
+*.suo
+.DS_Store
+Thumbs.db

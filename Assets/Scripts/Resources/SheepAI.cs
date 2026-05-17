@@ -1,0 +1,51 @@
+using UnityEngine;
+using System.Collections;
+
+public class SheepAI : MonoBehaviour
+{
+    [SerializeField] float moveSpeed = 1f;
+    [SerializeField] float wanderRadius = 3f;
+    [SerializeField] float idleTime = 3f;
+    [SerializeField] Animator animator;
+
+    Vector3 _startPos;
+    bool _isMoving;
+
+    void Start()
+    {
+        _startPos = transform.position;
+        if (animator == null) animator = GetComponent<Animator>();
+        StartCoroutine(WanderRoutine());
+    }
+
+    IEnumerator WanderRoutine()
+    {
+        while (true)
+        {
+            // Idle
+            _isMoving = false;
+            if (animator != null) animator.Play("Sheep_Idle");
+            yield return new WaitForSeconds(Random.Range(idleTime * 0.5f, idleTime * 1.5f));
+
+            // Choose target
+            Vector2 randomDir = Random.insideUnitCircle * wanderRadius;
+            Vector3 target = _startPos + new Vector3(randomDir.x, randomDir.y, 0);
+
+            // Move
+            _isMoving = true;
+            if (animator != null) animator.Play("Sheep_Run");
+            
+            while (Vector3.Distance(transform.position, target) > 0.1f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
+                
+                // Flip sprite
+                float dx = target.x - transform.position.x;
+                if (Mathf.Abs(dx) > 0.01f)
+                    transform.localScale = new Vector3(dx < 0 ? -1 : 1, 1, 1);
+                    
+                yield return null;
+            }
+        }
+    }
+}

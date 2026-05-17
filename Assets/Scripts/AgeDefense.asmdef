@@ -1,0 +1,9 @@
+{
+    "name": "AgeDefense",
+    "references": ["Unity.TextMeshPro"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "autoReferenced": true,
+    "noEngineReferences": false
+}
