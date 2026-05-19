@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f804022b4a3759468aa2a3dac81c71a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: AgeDefense::Building
-  maxHP: 200
+  maxHP: 300
   buildingLevel: 1
   faction: 1
 --- !u!114 &3394001313193414567
@@ -275,6 +275,8 @@ MonoBehaviour:
   troopPrefab: {fileID: 8734196243764572455, guid: d0052168d1628b84cb472e1396f1ffc2, type: 3}
   spawnCooldownLv1: 8
   spawnCooldownLv2: 4
+  maxTroopsAlive: 3
+  goldCostPerTroop: 15
 --- !u!61 &3884749969164136467
 BoxCollider2D:
   m_ObjectHideFlags: 0

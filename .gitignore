@@ -23,6 +23,14 @@ Packages/com.unity.burst/
 .idea/
 *.csproj
 *.sln
+*.slnx
 *.suo
 .DS_Store
 Thumbs.db
+
+# AI assistant local data (private — never commit)
+.claude/
+.superpowers/
+GeneratedAssets/
+docs/
+Assets/Plans/

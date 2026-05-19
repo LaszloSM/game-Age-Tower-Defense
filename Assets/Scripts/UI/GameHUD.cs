@@ -35,6 +35,9 @@ public class GameHUD : UIManager
     [SerializeField] TMP_Text   waveBannerText;
     [SerializeField] TMP_Text   waveCountdownText;
 
+    [Header("Close Button")]
+    [SerializeField] Button closeBuildPanelBtn;
+
     Castle _castle;
     float _elapsed;
     float _boostCooldown;
@@ -54,31 +57,34 @@ public class GameHUD : UIManager
         BuildingSlot.OnSlotClicked += OnSlotClicked;
         Building.OnBuildingClicked += OnBuildingSelected;
 
-        barracksBtn.onClick.AddListener(() => PlaceBuilding(BuildingType.Barracks));
-        archeryBtn.onClick.AddListener(()  => PlaceBuilding(BuildingType.Archery));
-        towerBtn.onClick.AddListener(()    => PlaceBuilding(BuildingType.Tower));
-        monasteryBtn.onClick.AddListener(() => PlaceBuilding(BuildingType.Monastery));
-        houseBtn.onClick.AddListener(()    => PlaceBuilding(BuildingType.House));
+        if (barracksBtn != null) barracksBtn.onClick.AddListener(() => PlaceBuilding(BuildingType.Barracks));
+        if (archeryBtn != null) archeryBtn.onClick.AddListener(()  => PlaceBuilding(BuildingType.Archery));
+        if (towerBtn != null) towerBtn.onClick.AddListener(()    => PlaceBuilding(BuildingType.Tower));
+        if (monasteryBtn != null) monasteryBtn.onClick.AddListener(() => PlaceBuilding(BuildingType.Monastery));
+        if (houseBtn != null) houseBtn.onClick.AddListener(()    => PlaceBuilding(BuildingType.House));
 
-        troopBoostBtn.onClick.AddListener(OnTroopBoost);
-        castleRepairBtn.onClick.AddListener(() => _castle?.EmergencyRepair());
-        buyPawnBtn.onClick.AddListener(OnBuyPawn);
-        upgradeBtn.onClick.AddListener(OnUpgradeBuilding);
+        if (troopBoostBtn != null) troopBoostBtn.onClick.AddListener(OnTroopBoost);
+        if (castleRepairBtn != null) castleRepairBtn.onClick.AddListener(() => _castle?.EmergencyRepair());
+        if (buyPawnBtn != null) buyPawnBtn.onClick.AddListener(OnBuyPawn);
+        if (upgradeBtn != null) upgradeBtn.onClick.AddListener(OnUpgradeBuilding);
+        if (closeBuildPanelBtn != null) closeBuildPanelBtn.onClick.AddListener(HideBuildPanel);
 
         AudioManager.Instance?.PlayMusic(AudioManager.Instance.gameMusic);
         RefreshHUD();
     }
 
-    void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         WaveManager.OnWaveStarting  += HandleWaveStarting;
         WaveManager.OnWaveBegun     += HandleWaveBegun;
         WaveManager.OnWaveCleared   += HandleWaveCleared;
         WaveManager.OnWaveCountdown += HandleWaveCountdown;
     }
 
-    void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         WaveManager.OnWaveStarting  -= HandleWaveStarting;
         WaveManager.OnWaveBegun     -= HandleWaveBegun;
         WaveManager.OnWaveCleared   -= HandleWaveCleared;
@@ -99,7 +105,7 @@ public class GameHUD : UIManager
             _elapsed += Time.deltaTime;
             int m = (int)(_elapsed / 60f);
             int s = (int)(_elapsed % 60f);
-            timerText.text = $"{m:00}:{s:00}";
+            if (timerText != null) timerText.text = $"{m:00}:{s:00}";
         }
 
         if (_boostCooldown > 0f)
@@ -112,11 +118,11 @@ public class GameHUD : UIManager
     protected override void RefreshHUD()
     {
         if (ResourceManager.Instance == null) return;
-        woodText.text = $"{ResourceManager.Instance.GetAmount(ResourceType.Wood)}";
-        goldText.text = $"{ResourceManager.Instance.GetAmount(ResourceType.Gold)}";
+        if (woodText != null) woodText.text = $"{ResourceManager.Instance.GetAmount(ResourceType.Wood)}";
+        if (goldText != null) goldText.text = $"{ResourceManager.Instance.GetAmount(ResourceType.Gold)}";
         int food = ResourceManager.Instance.GetAmount(ResourceType.Food);
         int cap  = ResourceManager.Instance.TroopCap;
-        foodText.text = $"{food} / cap:{cap}";
+        if (foodText != null) foodText.text = $"{food}/{cap}";
         RefreshBuildButtons();
     }
 
@@ -129,16 +135,18 @@ public class GameHUD : UIManager
     {
         var rm = ResourceManager.Instance;
         if (rm == null) return;
-        barracksBtn.interactable  = rm.CanSpend(ResourceType.Wood, 80);
-        archeryBtn.interactable   = rm.CanSpend(ResourceType.Wood, 60);
-        towerBtn.interactable     = rm.CanSpend(ResourceType.Wood, 100);
-        monasteryBtn.interactable = rm.CanSpend(ResourceType.Wood, 70) && rm.CanSpend(ResourceType.Food, 30);
-        houseBtn.interactable     = rm.CanSpend(ResourceType.Wood, 50);
-        buyPawnBtn.interactable   = rm.CanSpend(ResourceType.Gold, 50)
-                                  && rm.ActivePawnCount < rm.PawnSlotCap;
-        upgradeBtn.interactable   = _selectedBuilding != null
-                                  && _selectedBuilding.Level < 2
-                                  && rm.CanSpend(ResourceType.Gold, 100);
+
+        if (barracksBtn != null) barracksBtn.interactable  = rm.CanSpend(ResourceType.Wood, 80);
+        if (archeryBtn != null) archeryBtn.interactable   = rm.CanSpend(ResourceType.Wood, 60);
+        if (towerBtn != null) towerBtn.interactable     = rm.CanSpend(ResourceType.Wood, 100);
+        if (monasteryBtn != null) monasteryBtn.interactable = rm.CanSpend(ResourceType.Wood, 70) && rm.CanSpend(ResourceType.Food, 30);
+        if (houseBtn != null) houseBtn.interactable     = rm.CanSpend(ResourceType.Wood, 50);
+        
+        if (buyPawnBtn != null) 
+            buyPawnBtn.interactable = rm.CanSpend(ResourceType.Gold, 50) && rm.ActivePawnCount < rm.PawnSlotCap;
+
+        if (upgradeBtn != null) 
+            upgradeBtn.interactable = _selectedBuilding != null && _selectedBuilding.Level < 2 && rm.CanSpend(ResourceType.Gold, 100);
     }
 
     void OnSlotClicked(BuildingSlot slot)
@@ -194,7 +202,7 @@ public class GameHUD : UIManager
 
     public float GetElapsedTime() => _elapsed;
 
-    // ─── Wave Banner ──────────────────────────────────────────────────────────
+    // â”€â”€â”€ Wave Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     void HandleWaveStarting(int wave)
     {
@@ -210,12 +218,12 @@ public class GameHUD : UIManager
     void HandleWaveBegun(int wave)
     {
         if (waveCountdownText != null) waveCountdownText.gameObject.SetActive(false);
-        ShowBanner($"¡Oleada {wave}!", 3f);
+        ShowBanner($"OLEADA {wave}", 3f);
     }
 
     void HandleWaveCleared(int wave)
     {
-        ShowBanner($"¡Oleada {wave} superada!", 4f);
+        ShowBanner($"Oleada {wave} superada", 4f);
     }
 
     void ShowBanner(string message, float hideAfter = 0f)
@@ -236,11 +244,5 @@ public class GameHUD : UIManager
         waveBannerRoot?.SetActive(false);
     }
 
-#if UNITY_EDITOR
-    void LateUpdate()
-    {
-        if (UnityEngine.Input.GetKeyDown(KeyCode.D) && _castle != null)
-            _castle.TakeDamage(100f);
-    }
-#endif
+
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MonkAI : Unit
 {
-    [SerializeField] float healRadius = 3.0f;
+    [SerializeField] float healRadius    = 3.0f;
     [SerializeField] float healPerSecond = 10f;
     [SerializeField] ParticleSystem healEffect;
 
@@ -13,18 +13,35 @@ public class MonkAI : Unit
     void Update()
     {
         if (IsDead) return;
-        if (!AtFinalWaypoint())
+
+        bool moving = false;
+
+        if (_isDefending)
         {
-            if (ReachedWaypoint()) AdvanceWaypoint();
-            MoveTowardWaypoint();
+            if (Vector3.Distance(transform.position, _homePosition) > 1f)
+            {
+                MoveToward(_homePosition);
+                moving = true;
+            }
         }
+        else
+        {
+            if (!AtFinalWaypoint)
+            {
+                if (ReachedWaypoint()) AdvanceWaypoint();
+                MoveTowardWaypoint();
+                moving = true;
+            }
+            else
+            {
+                Building siege = FindNearestEnemyBuilding(99f);
+                if (siege != null) { MoveToward(siege.transform.position); moving = true; }
+            }
+        }
+
+        if (moving) _animator?.Play(HashRun);
         HealNearby();
     }
-
-    bool AtFinalWaypoint() =>
-        _waypoints != null && _waypoints.Length > 0
-        && _waypointIndex >= _waypoints.Length - 1
-        && ReachedWaypoint();
 
     void HealNearby()
     {
@@ -46,10 +63,10 @@ public class MonkAI : Unit
         else
         {
             if (healEffect != null && healEffect.isPlaying) healEffect.Stop();
-            if (AtFinalWaypoint())
-                _animator?.Play(HashIdle);
-            else
-                _animator?.Play(HashRun);
+            bool moving = _isDefending
+                ? Vector3.Distance(transform.position, _homePosition) > 1f
+                : !AtFinalWaypoint;
+            _animator?.Play(moving ? HashRun : HashIdle);
         }
     }
 }

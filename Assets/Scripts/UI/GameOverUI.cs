@@ -12,7 +12,18 @@ public class GameOverUI : MonoBehaviour
     void Start()
     {
         retryButton.onClick.AddListener(() => GameManager.Instance?.StartGame());
-        menuButton.onClick.AddListener(() => GameManager.Instance?.GoToMainMenu());
+        menuButton.onClick.AddListener(() => GoToMenu());
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape)) GoToMenu();
+    }
+
+    void GoToMenu()
+    {
+        Time.timeScale = 1f;   // reset in case game was paused
+        GameManager.Instance?.GoToMainMenu();
     }
 
     void OnEnable()

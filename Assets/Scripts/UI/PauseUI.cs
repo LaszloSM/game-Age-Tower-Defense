@@ -8,7 +8,18 @@ public class PauseUI : MonoBehaviour
 
     void Start()
     {
-        resumeButton.onClick.AddListener(() => GameManager.Instance?.ResumeGame());
-        menuButton.onClick.AddListener(() => GameManager.Instance?.GoToMainMenu());
+        resumeButton.onClick.AddListener(Resume);
+        menuButton.onClick.AddListener(() =>
+        {
+            Time.timeScale = 1f;
+            GameManager.Instance?.GoToMainMenu();
+        });
     }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape)) Resume();
+    }
+
+    void Resume() => GameManager.Instance?.ResumeGame();
 }

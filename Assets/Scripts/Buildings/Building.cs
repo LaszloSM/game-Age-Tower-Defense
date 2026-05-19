@@ -15,10 +15,15 @@ public class Building : MonoBehaviour
     BuildingSlot _mySlot;   // set by BuildingSlot.Occupy() — used to free slot on destroy
     public void SetSlot(BuildingSlot slot) => _mySlot = slot;
 
+    GameObject _fireInstance;
+
     public float CurrentHP { get; private set; }
     public float MaxHP => maxHP;
     public int Level => buildingLevel;
     public Faction Faction => faction;
+
+    /// <summary>Called by FactionRemapper at game-start to mirror factions when player picks Red.</summary>
+    public void SetFaction(Faction f) => faction = f;
     public bool IsFullHealth => Mathf.Approximately(CurrentHP, maxHP);
 
     protected virtual void Awake() => CurrentHP = maxHP;
@@ -29,7 +34,9 @@ public class Building : MonoBehaviour
     public void TakeDamage(float amount)
     {
         CurrentHP = Mathf.Max(0f, CurrentHP - amount);
+        DamagePopup.Create(transform.position, amount);
         OnHealthChanged?.Invoke(CurrentHP, maxHP);
+        UpdateFireEffect();
         if (CurrentHP <= 0f) HandleDestroyed();
     }
 
@@ -37,6 +44,22 @@ public class Building : MonoBehaviour
     {
         CurrentHP = Mathf.Min(maxHP, CurrentHP + amount);
         OnHealthChanged?.Invoke(CurrentHP, maxHP);
+        UpdateFireEffect();
+    }
+
+    protected virtual void UpdateFireEffect()
+    {
+        bool shouldBurn = CurrentHP > 0f && (CurrentHP / maxHP) <= 0.25f;
+        if (shouldBurn && _fireInstance == null && ParticleSpawner.Fire != null)
+        {
+            _fireInstance = Object.Instantiate(ParticleSpawner.Fire, transform.position, Quaternion.identity);
+            _fireInstance.transform.SetParent(transform);
+        }
+        else if (!shouldBurn && _fireInstance != null)
+        {
+            Object.Destroy(_fireInstance);
+            _fireInstance = null;
+        }
     }
 
     // Virtual so Castle can override without calling Destroy on itself during tests

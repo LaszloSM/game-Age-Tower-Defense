@@ -30,8 +30,15 @@ public class Pawn : MonoBehaviour
             _rb.freezeRotation = true;
         }
 
-        var castle = FindFirstObjectByType<Castle>();
-        if (castle != null) _castleTransform = castle.transform;
+        // Always match the chosen faction so animations use the right state names.
+        PawnFaction = FactionSelectUI.ChosenFaction;
+
+        // Find the player's castle specifically (not the enemy one).
+        var allCastles = FindObjectsByType<Castle>(FindObjectsSortMode.None);
+        foreach (var c in allCastles)
+            if (c.Faction == FactionSelectUI.ChosenFaction) { _castleTransform = c.transform; break; }
+        if (_castleTransform == null && allCastles.Length > 0)
+            _castleTransform = allCastles[0].transform;   // fallback
 
         ResourceManager.Instance?.RegisterPawn();
         PawnManager.Instance?.RegisterPawn(this);

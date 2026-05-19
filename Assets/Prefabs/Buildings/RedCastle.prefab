@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b5734dd89d5fea44ae8733d5451f013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: AgeDefense::Castle
-  maxHP: 500
+  maxHP: 1000
   buildingLevel: 1
   faction: 1
   fireEffect: {fileID: 3168609683438123752}

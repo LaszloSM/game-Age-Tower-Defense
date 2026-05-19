@@ -31,16 +31,16 @@ public class UIManager : MonoBehaviour
 
     void HandleStateChanged(GameState state)
     {
-        pausePanel?.SetActive(state == GameState.Paused);
-        gameOverPanel?.SetActive(state == GameState.GameOver);
+        if (pausePanel != null) pausePanel.SetActive(state == GameState.Paused);
+        if (gameOverPanel != null) gameOverPanel.SetActive(state == GameState.GameOver);
     }
 
-    public void ShowBuildPanel()    => buildPanel?.SetActive(true);
-    public void HideBuildPanel()    => buildPanel?.SetActive(false);
-    public void ShowPawnInfo()      => pawnInfoPanel?.SetActive(true);
-    public void HidePawnInfo()      => pawnInfoPanel?.SetActive(false);
-    public void ShowBuildingInfo()  => buildingInfoPanel?.SetActive(true);
-    public void HideBuildingInfo()  => buildingInfoPanel?.SetActive(false);
+    public void ShowBuildPanel()    { if(buildPanel != null) buildPanel.SetActive(true); }
+    public void HideBuildPanel()    { if(buildPanel != null) buildPanel.SetActive(false); }
+    public void ShowPawnInfo()      { if(pawnInfoPanel != null) pawnInfoPanel.SetActive(true); }
+    public void HidePawnInfo()      { if(pawnInfoPanel != null) pawnInfoPanel.SetActive(false); }
+    public void ShowBuildingInfo()  { if(buildingInfoPanel != null) buildingInfoPanel.SetActive(true); }
+    public void HideBuildingInfo()  { if(buildingInfoPanel != null) buildingInfoPanel.SetActive(false); }
 
     protected virtual void RefreshHUD() { }
 }

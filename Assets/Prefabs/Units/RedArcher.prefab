@@ -211,7 +211,8 @@ MonoBehaviour:
   attackDamage: 12
   attackRange: 5
   attackCooldown: 1.5
-  arrowPrefab: {fileID: 0}
+  aggroRadius: 6
+  arrowPrefab: {fileID: 2280663861329159707, guid: e68eef6a7b376514ca452afea682a986, type: 3}
 --- !u!58 &8931471249130873885
 CircleCollider2D:
   m_ObjectHideFlags: 0

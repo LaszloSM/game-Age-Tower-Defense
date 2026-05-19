@@ -7,6 +7,9 @@ public class Castle : Building
 
     bool _firePlaying;
 
+    // Castle manages its own fire effect via the Inspector-assigned ParticleSystem
+    protected override void UpdateFireEffect() { }
+
     protected override void Awake()
     {
         base.Awake();

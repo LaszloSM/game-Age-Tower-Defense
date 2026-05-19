@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class BuildingSlot : MonoBehaviour
+public class BuildingSlot : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] int slotId;
     [SerializeField] SpriteRenderer slotIndicator;
@@ -25,8 +26,16 @@ public class BuildingSlot : MonoBehaviour
         BuildingManager.Instance?.FreeSlot(slotId);
     }
 
-    void OnMouseDown()
+    public void OnPointerClick(PointerEventData eventData)
     {
+        if (eventData.button != PointerEventData.InputButton.Right) return;
         if (!IsOccupied) OnSlotClicked?.Invoke(this);
+    }
+
+    void OnMouseOver()
+    {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+        if (Input.GetMouseButtonDown(1) && !IsOccupied)
+            OnSlotClicked?.Invoke(this);
     }
 }

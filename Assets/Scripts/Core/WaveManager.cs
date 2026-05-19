@@ -10,11 +10,21 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager Instance { get; private set; }
 
-    [Header("Enemy Prefabs")]
+    [Header("Enemy Prefabs — Red team (player = Blue)")]
     [SerializeField] GameObject enemyWarriorPrefab;
     [SerializeField] GameObject enemyArcherPrefab;
     [SerializeField] GameObject enemyLancerPrefab;
     [SerializeField] GameObject enemyMonkPrefab;
+
+    [Header("Enemy Prefabs — Blue team (player = Red)")]
+    [Tooltip("Blue-sprite warrior spawned as enemy when player chose Red faction.")]
+    [SerializeField] GameObject blueWarriorPrefab;
+    [Tooltip("Blue-sprite archer spawned as enemy when player chose Red faction.")]
+    [SerializeField] GameObject blueArcherPrefab;
+    [Tooltip("Blue-sprite lancer spawned as enemy when player chose Red faction.")]
+    [SerializeField] GameObject blueLancerPrefab;
+    [Tooltip("Blue-sprite monk spawned as enemy when player chose Red faction.")]
+    [SerializeField] GameObject blueMonkPrefab;
 
     [Header("Spawn Points (map edges)")]
     [Tooltip("Add one Transform per map-edge spawn location. Enemies pick a random one each spawn.")]
@@ -44,8 +54,17 @@ public class WaveManager : MonoBehaviour
     void Start()
     {
         _enemyFaction = FactionSelectUI.ChosenFaction == Faction.Blue ? Faction.Red : Faction.Blue;
-        // Start waves if the game is Playing — or if there's no GameManager at all
-        // (allows direct Game-scene testing without the full menu flow).
+
+        // If GameManager exists but the game was never transitioned to Playing
+        // (e.g. direct Game-scene play in the editor), force the transition now.
+        // ChangeState fires OnStateChanged → HandleState(Playing) → StartCoroutine(WaveLoop())
+        if (GameManager.Instance != null && GameManager.Instance.State == GameState.Menu)
+        {
+            GameManager.Instance.ChangeState(GameState.Playing);
+            return; // HandleState already started the coroutine
+        }
+
+        // Normal path: either no GameManager (unit-test scene) or already Playing
         bool shouldStart = GameManager.Instance == null
                         || GameManager.Instance.State == GameState.Playing;
         if (shouldStart)
@@ -80,7 +99,7 @@ public class WaveManager : MonoBehaviour
 
             // ── Countdown ────────────────────────────────────────────────────
             OnWaveStarting?.Invoke(_waveNumber);
-            float countdown = restBetweenWaves;
+            float countdown = _waveNumber == 1 ? 30f : 10f; // 30s for first wave, 10s for others
             while (countdown > 0f)
             {
                 OnWaveCountdown?.Invoke(Mathf.CeilToInt(countdown));
@@ -100,30 +119,73 @@ public class WaveManager : MonoBehaviour
 
     IEnumerator SpawnWave(int wave)
     {
-        int count = EnemiesForWave(wave);
-        for (int i = 0; i < count; i++)
+        int totalToSpawn = Mathf.Min(EnemiesForWave(wave), 25);
+        int spawnedCount = 0;
+        int lastSpawnIdx = -1;   // track last group's spawn point so next one differs
+
+        while (spawnedCount < totalToSpawn)
         {
-            SpawnOne(wave);
-            yield return new WaitForSeconds(spawnInterval);
+            // Groups of 3–5, each group from a DIFFERENT spawn point
+            int groupSize   = Random.Range(3, 6);
+            int actualGroup = Mathf.Min(groupSize, totalToSpawn - spawnedCount);
+
+            // Pick a spawn point different from the last one (forces flanking)
+            int spawnIdx = PickDifferentSpawn(lastSpawnIdx);
+            lastSpawnIdx  = spawnIdx;
+
+            for (int i = 0; i < actualGroup; i++)
+            {
+                SpawnOneAt(wave, spawnIdx);
+                spawnedCount++;
+                if (i < actualGroup - 1)
+                    yield return new WaitForSeconds(0.7f);  // small gap inside group
+            }
+
+            if (spawnedCount < totalToSpawn)
+                yield return new WaitForSeconds(6f);  // gap between groups keeps battlefield readable
         }
+    }
+
+    int PickDifferentSpawn(int lastIdx)
+    {
+        if (spawnPoints == null || spawnPoints.Length == 0) return 0;
+        if (spawnPoints.Length == 1) return 0;
+
+        int idx;
+        int tries = 0;
+        do {
+            idx = Random.Range(0, spawnPoints.Length);
+            tries++;
+        } while (idx == lastIdx && tries < 10);
+        return idx;
     }
 
     // ─── Spawning ─────────────────────────────────────────────────────────────
 
-    void SpawnOne(int wave)
+    void SpawnOneAt(int wave, int spawnIdx)
     {
         if (spawnPoints == null || spawnPoints.Length == 0) return;
 
         GameObject prefab = ChoosePrefab(wave);
         if (prefab == null) return;
 
-        Transform spawn = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        var go = Instantiate(prefab, spawn.position, Quaternion.identity);
+        Transform spawn  = spawnPoints[spawnIdx];
+        // Wider scatter so enemies don't spawn on top of each other
+        Vector3   offset = (Vector3)(Random.insideUnitCircle * 2.5f);
+        var go = Instantiate(prefab, spawn.position + offset, Quaternion.identity);
 
         if (go.TryGetComponent<Unit>(out var unit))
         {
             unit.Initialize(_enemyFaction);
+            unit.MoveSpeed    = 6f;
+            unit.AttackDamage = 3f;
             ApplyScaling(unit, wave);
+            // Large per-unit path offset keeps troops in separate lanes — no clustering at waypoints
+            float lateralRange = 4.5f;   // ±4.5 Y  → wide spread across the path
+            float xJitter      = 1.8f;   // ±1.8 X  → stagger arrival times at each node
+            unit.SetPathOffset(new Vector3(
+                Random.Range(-xJitter,      xJitter),
+                Random.Range(-lateralRange, lateralRange), 0f));
             unit.OnDied += OnEnemyDied;
             _activeEnemies++;
         }
@@ -145,24 +207,34 @@ public class WaveManager : MonoBehaviour
         _ => 10 + wave * 2   // scales indefinitely
     };
 
+    // Returns the correct prefab set based on which faction is the enemy this session.
+    // When player chose Blue  → enemy is Red  → use enemyXxxPrefab (Red sprites).
+    // When player chose Red   → enemy is Blue → use blueXxxPrefab  (Blue sprites).
+    GameObject WarriorPrefab => _enemyFaction == Faction.Blue && blueWarriorPrefab != null ? blueWarriorPrefab : enemyWarriorPrefab;
+    GameObject ArcherPrefab  => _enemyFaction == Faction.Blue && blueArcherPrefab  != null ? blueArcherPrefab  : enemyArcherPrefab;
+    GameObject LancerPrefab  => _enemyFaction == Faction.Blue && blueLancerPrefab  != null ? blueLancerPrefab  : enemyLancerPrefab;
+    GameObject MonkPrefab    => _enemyFaction == Faction.Blue && blueMonkPrefab    != null ? blueMonkPrefab    : enemyMonkPrefab;
+
     GameObject ChoosePrefab(int wave)
     {
-        if (wave == 1) return enemyWarriorPrefab;
-        if (wave == 2) return Random.value > 0.4f ? enemyWarriorPrefab : enemyArcherPrefab;
+        if (wave == 1) return WarriorPrefab;
+        if (wave == 2) return Random.value > 0.4f ? WarriorPrefab : ArcherPrefab;
 
         float r = Random.value;
-        if (wave <= 4)
+
+        // Waves 3-6: warriors + archers + lancers only
+        if (wave <= 6)
         {
-            if (r < 0.45f) return enemyWarriorPrefab;
-            if (r < 0.75f) return enemyArcherPrefab;
-            return enemyLancerPrefab;
+            if (r < 0.45f) return WarriorPrefab;
+            if (r < 0.75f) return ArcherPrefab;
+            return LancerPrefab;
         }
 
-        // Wave 5+: full mix
-        if (r < 0.30f) return enemyWarriorPrefab;
-        if (r < 0.55f) return enemyArcherPrefab;
-        if (r < 0.75f) return enemyLancerPrefab;
-        return enemyMonkPrefab;
+        // Wave 7+: full mix including monks
+        if (r < 0.30f) return WarriorPrefab;
+        if (r < 0.55f) return ArcherPrefab;
+        if (r < 0.75f) return LancerPrefab;
+        return MonkPrefab;
     }
 
     void ApplyScaling(Unit unit, int wave)

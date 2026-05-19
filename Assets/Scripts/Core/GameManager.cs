@@ -9,6 +9,16 @@ public class GameManager : MonoBehaviour
     public GameState State { get; private set; } = GameState.Menu;
     public static event System.Action<GameState> OnStateChanged;
 
+    // ── Singleton bootstrap ───────────────────────────────────────────────────
+    // Calling Get() guarantees an instance even if GameManager is not in the scene.
+    public static GameManager Get()
+    {
+        if (Instance != null) return Instance;
+        var go = new GameObject("GameManager");
+        go.AddComponent<GameManager>();   // Awake runs immediately → sets Instance
+        return Instance;
+    }
+
     void Awake()
     {
         if (Instance != null) { Destroy(gameObject); return; }

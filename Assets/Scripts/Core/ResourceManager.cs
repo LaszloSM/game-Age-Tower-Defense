@@ -8,12 +8,12 @@ public class ResourceManager : MonoBehaviour
     public static event System.Action OnResourceChanged;
     public static event System.Action<int> OnTroopCapChanged;
 
-    private readonly Dictionary<ResourceType, int> _resources = new()
-    {
-        { ResourceType.Wood, 0 },
-        { ResourceType.Gold, 0 },
-        { ResourceType.Food, 0 }
-    };
+    [Header("Starting Resources")]
+    [SerializeField] int startingWood = 300;   // more wood to build multiple structures
+    [SerializeField] int startingGold = 200;   // more gold so troops spawn without stalling
+    [SerializeField] int startingFood = 50;
+
+    private Dictionary<ResourceType, int> _resources;
 
     private int _pawnSlotCap = 3;   // base 3; +1 per House built
     public int PawnSlotCap => _pawnSlotCap;
@@ -26,6 +26,12 @@ public class ResourceManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
+        _resources = new Dictionary<ResourceType, int>
+        {
+            { ResourceType.Wood, startingWood },
+            { ResourceType.Gold, startingGold },
+            { ResourceType.Food, startingFood }
+        };
     }
 
     public static int CalculateTroopCap(int food) =>
