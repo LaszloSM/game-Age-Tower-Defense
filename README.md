@@ -106,5 +106,5 @@ Sprites, animaciones, tilemaps, elementos de UI, efectos de partículas y audio 
 
 ## Licencia
 
-© 2025 Laszlo Sierra. Todos los derechos reservados.
+© 2026 Laszlo Sierra. Todos los derechos reservados.
 Los assets visuales y de audio pertenecen a sus respectivos creadores (ver Créditos).
