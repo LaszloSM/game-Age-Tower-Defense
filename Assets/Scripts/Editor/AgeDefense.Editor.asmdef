@@ -1,0 +1,9 @@
+{
+    "name": "AgeDefense.Editor",
+    "references": ["AgeDefense", "Unity.TextMeshPro"],
+    "includePlatforms": ["Editor"],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "autoReferenced": false,
+    "noEngineReferences": false
+}
