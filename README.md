@@ -1,108 +1,110 @@
 # Age Tower Defense
 
-A real-time strategy / tower defense game built in **Unity 6** using the **Tiny Sword** pixel art asset pack.
+Un juego de estrategia en tiempo real / defensa de torres construido en **Unity 6** usando el paquete de pixel art **Tiny Sword**.
 
-Defend your castle against endless waves of enemy troops. Gather resources, build defensive structures, train your own army, and survive as long as you can.
+Defiende tu castillo contra oleadas interminables de tropas enemigas. Recolecta recursos, construye estructuras defensivas, entrena tu propio ejército y sobrevive el mayor tiempo posible.
 
 ---
 
-## Gameplay
+## Cómo jugar
 
-### Choose Your Faction
-Select **Blue** or **Red** faction at the start. Your castle, buildings, pawns, and troops will all match your chosen color.
+### 1. Elige tu facción
+Al iniciar, selecciona la facción **Azul** o **Roja**. Tu castillo, edificios, peones y tropas adoptarán el color elegido. Los enemigos siempre serán del color contrario.
 
-### Gather Resources
-Send **Pawns** to harvest resource nodes scattered across the map:
-- 🪵 **Wood** — from trees (axe)
-- ⛏️ **Gold** — from ore stones (pickaxe)
-- 🥩 **Food** — from sheep (knife)
+### 2. Recolecta recursos
+Haz clic en un **nodo de recursos** del mapa para enviar un Peón a recolectarlo:
 
-Pawns automatically carry resources back to the castle and loop until the node is depleted. Food increases your troop cap; Gold unlocks upgrades.
+- 🪵 **Madera** — de árboles (hacha)
+- ⛏️ **Oro** — de piedras minerales (pico)
+- 🥩 **Comida** — de ovejas (cuchillo)
 
-### Build Structures
-Click an empty **Building Slot** on the map to open the build menu. Each building costs Wood and spawns troops automatically over time:
+Los Peones llevan los recursos de regreso al castillo automáticamente y repiten el ciclo hasta que el nodo se agote. La Comida aumenta tu límite de tropas; el Oro desbloquea mejoras.
 
-| Building | Cost | Spawns | Cooldown |
+### 3. Construye estructuras
+Haz clic en un **espacio de construcción** vacío en el mapa para abrir el menú de construcción. Cada edificio cuesta Madera y genera tropas automáticamente con el tiempo:
+
+| Edificio | Costo | Genera | Enfriamiento |
 |---|---|---|---|
-| Barracks | 80 Wood | Warrior | 8s (4s upgraded) |
-| Archery Tower | 60 Wood | Archer | 8s (4s upgraded) |
-| Tower | 100 Wood | Lancer | 8s (4s upgraded) |
-| Monastery | 70 Wood + 30 Food | Monk | 8s (4s upgraded) |
-| House | 50 Wood | +1 Pawn slot | — |
+| Cuartel | 80 Madera | Guerrero | 8s (4s mejorado) |
+| Torre de Arquería | 60 Madera | Arquero | 8s (4s mejorado) |
+| Torre | 100 Madera | Lancero | 8s (4s mejorado) |
+| Monasterio | 70 Madera + 30 Comida | Monje | 8s (4s mejorado) |
+| Casa | 50 Madera | +1 ranura de Peón | — |
 
-Spend **100 Gold** to upgrade a building and halve its spawn cooldown.
+Gasta **100 de Oro** para mejorar un edificio y reducir a la mitad su tiempo de generación de tropas.
 
-### Troops
-Your troops patrol automatically and attack any nearby enemy on sight:
+### 4. Gestiona tus tropas
+Tus tropas patrullan automáticamente alrededor del castillo y atacan a cualquier enemigo cercano:
 
-- ⚔️ **Warrior** — balanced melee fighter
-- 🏹 **Archer** — long-range, fires arrows
-- 🗡️ **Lancer** — fast melee, holds the line at final position
-- 🙏 **Monk** — heals nearby allied troops
+- ⚔️ **Guerrero** — combatiente cuerpo a cuerpo equilibrado
+- 🏹 **Arquero** — ataque a larga distancia, dispara flechas
+- 🗡️ **Lancero** — cuerpo a cuerpo rápido, mantiene la línea
+- 🙏 **Monje** — cura a las tropas aliadas cercanas
 
-### Defend the Castle
-Enemy waves march from the southern map edge toward your castle every **30 seconds**. Waves grow larger and stronger over time. If the castle HP reaches zero — **Game Over**.
+### 5. Defiende el castillo
+Las oleadas enemigas marchan desde los bordes del mapa hacia tu castillo. Tienes **30 segundos** antes de la primera oleada y **10 segundos** entre oleadas siguientes. Cada oleada trae más enemigos y más fuertes. Si el HP del castillo llega a cero — **Fin del juego**.
 
-The castle shows fire effects when below 30% HP. Use the **Emergency Repair** button (costs Gold) or assign a Pawn to repair damaged buildings.
+El castillo muestra efectos de fuego cuando está por debajo del 30% de HP. Asigna un Peón a un edificio dañado haciendo clic sobre él para repararlo.
 
-### Special Abilities
-- **Troop Boost** — spend 150 Gold to give all active troops +50% stats for the current fight (2-minute cooldown)
-- **Buy Pawn** — spend 50 Gold to recruit an extra Pawn
+### 6. Habilidades especiales
+- **Impulso de tropas** — gasta 150 de Oro para dar a todas las tropas activas +50% de estadísticas durante 2 minutos
+- **Contratar Peón** — gasta 50 de Oro para reclutar un Peón adicional
 
 ---
 
-## Wave System
+## Sistema de oleadas
 
-| Wave | Enemies | Composition |
+| Oleada | Enemigos | Composición |
 |---|---|---|
-| 1 | 5 | Warriors only |
-| 2 | 8 | Warriors + Archers |
-| 3 | 10 | Warriors, Archers, Lancers |
-| 4 | 12 | Full mix |
-| 5+ | 10 + wave×2 | Full mix, +25% stats per wave |
+| 1 | 5 | Solo guerreros |
+| 2 | 8 | Guerreros + Arqueros |
+| 3 | 10 | Guerreros, Arqueros, Lanceros |
+| 4 | 12 | Mezcla completa |
+| 7+ | 10 + oleada×2 | Mezcla completa con Monjes, +25% estadísticas por oleada |
 
-A countdown banner announces each incoming wave. Survive until the last wave — or as long as you can.
+Un banner de cuenta regresiva anuncia cada oleada entrante. ¡Sobrevive el mayor tiempo posible!
 
 ---
 
-## Controls
+## Controles
 
-| Action | Input |
+| Acción | Entrada |
 |---|---|
-| Send Pawn to resource | Click resource node |
-| Cancel Pawn task | Click assigned node again |
-| Place building | Click empty building slot → choose type |
-| Repair building | Click damaged building (Pawn must be idle) |
-| Move player warrior | WASD / Arrow keys |
-| Attack (player warrior) | Left click |
-| Pause | Esc |
+| Enviar Peón a recurso | Clic en nodo de recurso |
+| Cancelar tarea del Peón | Clic en el nodo asignado nuevamente |
+| Construir edificio | Clic en espacio vacío → elegir tipo |
+| Reparar edificio | Clic en edificio dañado (el Peón debe estar libre) |
+| Mover guerrero del jugador | WASD / Teclas de dirección |
+| Atacar (guerrero del jugador) | Clic izquierdo |
+| Pausar / Reanudar | Esc |
+| Volver al menú principal | Esc (en pantalla de Game Over) |
 
 ---
 
-## Built With
+## Tecnología utilizada
 
 - **Unity 6000.3.9f1**
-- **C#** — coroutine-based AI, physics movement, event-driven UI
-- **Rigidbody2D** kinematic pawns with `MovePosition` for smooth physics
-- **Y-Sort** depth system for correct 2D top-down layering
-- **Wave Manager** with per-wave enemy composition and stat scaling
-- **Projectile system** for archer arrows (tracks unit and building targets)
+- **C#** — IA basada en corrutinas, movimiento físico, UI orientada a eventos
+- **Rigidbody2D** cinemático con `MovePosition` para física fluida
+- **Sistema Y-Sort** para capas correctas en perspectiva 2D top-down
+- **Wave Manager** con composición de enemigos por oleada y escalado de estadísticas
+- **Sistema de proyectiles** para flechas de arqueros
 
 ---
 
-## Credits
+## Créditos
 
-**Created by [Laszlo Sierra](https://github.com/LaszloSM)**
-Game design, programming, and all systems built from scratch in Unity 6.
+**Creado por [Laszlo Sierra](https://github.com/LaszloSM)**
+Diseño del juego, programación y todos los sistemas construidos desde cero en Unity 6.
 
-**Pixel art assets** — [Tiny Sword](https://pixelfrog-assets.itch.io/) by **Pixel Frog**
+**Assets de pixel art** — [Tiny Sword](https://pixelfrog-assets.itch.io/) por **Pixel Frog**
 → https://pixelfrog-assets.itch.io/
 
-Sprites, animations, tilemaps, UI elements, particle effects, and audio from the Tiny Sword asset pack. Please support their amazing work!
+Sprites, animaciones, tilemaps, elementos de UI, efectos de partículas y audio del paquete Tiny Sword. ¡Apoya su increíble trabajo!
 
 ---
 
-## License
+## Licencia
 
-© 2025 Laszlo Sierra. All rights reserved.
-Visual and audio assets belong to their respective creators (see Credits above).
+© 2025 Laszlo Sierra. Todos los derechos reservados.
+Los assets visuales y de audio pertenecen a sus respectivos creadores (ver Créditos).
